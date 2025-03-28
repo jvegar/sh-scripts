@@ -72,10 +72,12 @@ play_shloader() {
 
 
 end_shloader() {
-  kill "${shloader_pid}" &>/dev/null
-  tput cnorm
-  if [[ "${ending}" ]]; then
-    printf "\r${ending}"; echo
+  if [[ -v shloader_pid ]]; then
+    kill "${shloader_pid}" &>/dev/null || true
+  fi
+  tput cnorm || true
+  if [[ -n "${ending-}" ]]; then
+    printf "\r%s\n" "${ending}"
   fi
 }
 
@@ -120,4 +122,6 @@ shloader() {
   play_shloader &
   shloader_pid="${!}"
 }
-shloader
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  shloader
+fi

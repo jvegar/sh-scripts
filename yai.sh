@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # Load shloader
-source /Users/josevega/repos/projects/sh-scripts/shloader.sh 2>/dev/null
+source /home/jvegar/repos/projects/sh-scripts/shloader.sh &>/dev/null
+if [ $? -ne 0 ]; then
+    echo "Error: Could not load shloader.sh"
+    echo "Looking for: $HOME/repos/projects/sh-scripts/shloader.sh"
+    exit 1
+fi
 
 # Function to concatenate strings and evaluate the result
 main() {
@@ -25,8 +30,8 @@ if [ -z "$1" ]; then
 fi
 
 # Call the function with the input string
-shloader -l dots2 -m "" -e "Done!" 2>/dev/null
+shloader -l dots2 -m "Running raw query..." -e "Done!"
 
 main "$1"
 
-end_shloader
+# end_shloader
