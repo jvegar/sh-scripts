@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load shloader
-source /home/jvegar/repos/projects/sh-scripts/shloader.sh &>/dev/null
+source $HOME/repos/projects/sh-scripts/shloader.sh &>/dev/null
 if [ $? -ne 0 ]; then
     echo "Error: Could not load shloader.sh"
     echo "Looking for: $HOME/repos/projects/sh-scripts/shloader.sh"
