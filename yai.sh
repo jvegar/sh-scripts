@@ -1,10 +1,37 @@
 #!/bin/bash
 
-# Load shloader
-source $HOME/repos/projects/sh-scripts/shloader.sh &>/dev/null
-if [ $? -ne 0 ]; then
-    echo "Error: Could not load shloader.sh"
-    echo "Looking for: $HOME/repos/projects/sh-scripts/shloader.sh"
+# Determine home directory using multiple fallback methods
+get_home_dir() {
+    # Try $HOME first
+    if [ -n "$HOME" ]; then
+        echo "$HOME"
+        return
+    fi
+    
+    # Try getent if available
+    if command -v getent >/dev/null 2>&1; then
+        HOME=$(getent passwd "$(whoami)" | cut -d: -f6)
+        if [ -n "$HOME" ]; then
+            echo "$HOME"
+            return
+        fi
+    fi
+    
+    # Fallback to ~ expansion
+    echo ~
+}
+
+HOME_DIR=$(get_home_dir)
+SCRIPT_DIR="$HOME_DIR/repos/projects/sh-scripts"
+LOADER_PATH="$SCRIPT_DIR/shloader.sh"
+
+# Verify and source the loader
+if [ -f "$LOADER_PATH" ]; then
+    source "$LOADER_PATH"
+else
+    echo "Error: Could not find shloader.sh"
+    echo "Searched in: $LOADER_PATH"
+    echo "Please ensure the file exists at the expected location"
     exit 1
 fi
 

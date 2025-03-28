@@ -1,10 +1,20 @@
 #!/bin/bash
-# https://github.com/Kaderovski/shloader
-# me@kaderovski.com
+
+# Define end_shloader function first
+end_shloader() {
+  if [ ! -z "${shloader_pid+x}" ]; then
+    kill "${shloader_pid}" &>/dev/null || true
+  fi
+  tput cnorm || true
+  if [ ! -z "${ending+x}" ]; then
+    printf "\r%s\n" "${ending}"
+  fi
+}
+
+# Set options and trap after function definition
 set -Eeuo pipefail
 trap end_shloader SIGINT SIGTERM ERR EXIT RETURN
 tput civis
-
 
 # Loaders
 # EMOJIS
@@ -70,16 +80,10 @@ play_shloader() {
   done
 }
 
-
-end_shloader() {
-  if [[ -v shloader_pid ]]; then
-    kill "${shloader_pid}" &>/dev/null || true
-  fi
-  tput cnorm || true
-  if [[ -n "${ending-}" ]]; then
-    printf "\r%s\n" "${ending}"
-  fi
-}
+# Then set the trap
+set -Eeuo pipefail
+trap end_shloader SIGINT SIGTERM ERR EXIT RETURN
+tput civis
 
 
 shloader() {
