@@ -44,7 +44,12 @@ main() {
   raw_query="echo '$input_string' | fabric -p raw_query"
 
   # Evaluate the concatenated string and color the output in cyan
+  first_line=true
   eval "$raw_query" | while IFS= read -r line; do
+    if [ "$first_line" = true ]; then
+      echo ""  # Add empty line before first line
+      first_line=false
+    fi
     echo -e "\033[36m${line}\033[0m"
   done
 }
