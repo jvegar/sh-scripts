@@ -24,6 +24,7 @@ get_home_dir() {
 HOME_DIR=$(get_home_dir)
 SCRIPT_DIR="$HOME_DIR/repos/projects/sh-scripts"
 LOADER_PATH="$SCRIPT_DIR/shloader.sh"
+OBSIDIAN_DIR="/mnt/d/repos/learning/obsidian/obsidian-vault-jevr/AI Queries"
 
 # Verify and source the loader
 if [ -f "$LOADER_PATH" ]; then
@@ -37,22 +38,22 @@ fi
 
 # Function to concatenate strings and evaluate the result
 main() {
-  # Input string
-  input_string=$1
+  # Input strings
+  local query_string="$1"
+  local title_string="${2:-}"
   
-  # Other strings to concatenate
-  raw_query="echo '$input_string' | fabric -p raw_query"
+  # Concatenate raw query 
+  if [ -n "$title_string" ]; then
+    local time_stamp=$(date +'%Y-%m-%d')
+    local output_path="$OBSIDIAN_DIR/${time_stamp}-${title_string}.md" 
+    raw_query="echo '$query_string' | fabric -p raw_query -o '$output_path'"  
+  else 
+    raw_query="echo '$query_string' | fabric -p raw_query --stream"
+  fi
 
-  # Evaluate the concatenated string and color the output in cyan
-  first_line=true
-  eval "$raw_query" | while IFS= read -r line; do
-    if [ "$first_line" = true ]; then
-      echo ""  # Add empty line before first line
-      first_line=false
-    fi
-    echo -e "\033[36m${line}\033[0m"
-  done
+  eval "$raw_query" | glow -
 }
+
 
 
 # Check if an argument is provided
@@ -64,6 +65,6 @@ fi
 # Call the function with the input string
 shloader -l dots2 -m "Running raw query..." -e "Done!"
 
-main "$1"
+main "$1" "${2:-}"
 
 # end_shloader
